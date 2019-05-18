@@ -250,22 +250,22 @@ BUILT_SOURCES += \
 EXTRA_DIST += \
 	t/issue251/issue251.proto
 
-# Issue #330
+# Issue #375
 check_PROGRAMS += \
-	t/issue330/issue330
+	t/issue375/issue375
 TESTS += \
-	t/issue330/issue330
-t_issue330_issue330_SOURCES = \
-	t/issue330/issue330.c \
-	t/issue330/issue330.pb-c.c
-t_issue330_issue330_LDADD = \
+	t/issue375/issue375
+t_issue375_issue375_SOURCES = \
+	t/issue375/issue375.c \
+	t/issue375/issue375.pb-c.c
+t_issue375_issue375_LDADD = \
 	protobuf-c/libprotobuf-c.la
-t/issue330/issue330.pb-c.c t/issue330/issue330.pb-c.h: $(top_builddir)/protoc-c/protoc-gen-c$(EXEEXT) $(top_srcdir)/t/issue330/issue330.proto
-	$(AM_V_GEN)@PROTOC@ --plugin=protoc-gen-c=$(top_builddir)/protoc-c/protoc-gen-c$(EXEEXT) -I$(top_srcdir) --c_out=$(top_builddir) $(top_srcdir)/t/issue330/issue330.proto
+t/issue375/issue375.pb-c.c t/issue375/issue375.pb-c.h: $(top_builddir)/protoc-c/protoc-gen-c$(EXEEXT) $(top_srcdir)/t/issue375/issue375.proto
+	$(AM_V_GEN)@PROTOC@ --plugin=protoc-gen-c=$(top_builddir)/protoc-c/protoc-gen-c$(EXEEXT) -I$(top_srcdir) --c_out=$(top_builddir) $(top_srcdir)/t/issue375/issue375.proto
 BUILT_SOURCES += \
-	t/issue330/issue330.pb-c.c t/issue330/issue330.pb-c.h
+	t/issue375/issue375.pb-c.c t/issue375/issue375.pb-c.h
 EXTRA_DIST += \
-	t/issue330/issue330.proto
+	t/issue375/issue375.proto
 
 endif # CROSS_COMPILING
 
