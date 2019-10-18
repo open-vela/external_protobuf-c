@@ -312,9 +312,10 @@ int32_size(int32_t v)
 static inline uint32_t
 zigzag32(int32_t v)
 {
-	// Note:  the right-shift must be arithmetic
-	// Note:  left shift must be unsigned because of overflow
-	return ((uint32_t)(v) << 1) ^ (uint32_t)(v >> 31);
+	if (v < 0)
+		return (-(uint32_t)v) * 2 - 1;
+	else
+		return (uint32_t)(v) * 2;
 }
 
 /**
@@ -376,9 +377,10 @@ uint64_size(uint64_t v)
 static inline uint64_t
 zigzag64(int64_t v)
 {
-	// Note:  the right-shift must be arithmetic
-	// Note:  left shift must be unsigned because of overflow
-	return ((uint64_t)(v) << 1) ^ (uint64_t)(v >> 63);
+	if (v < 0)
+		return (-(uint64_t)v) * 2 - 1;
+	else
+		return (uint64_t)(v) * 2;
 }
 
 /**
@@ -2421,8 +2423,10 @@ parse_int32(unsigned len, const uint8_t *data)
 static inline int32_t
 unzigzag32(uint32_t v)
 {
-	// Note:  Using unsigned types prevents undefined behavior
-	return (int32_t)((v >> 1) ^ (~(v & 1) + 1));
+	if (v & 1)
+		return -(v >> 1) - 1;
+	else
+		return v >> 1;
 }
 
 static inline uint32_t
@@ -2463,8 +2467,10 @@ parse_uint64(unsigned len, const uint8_t *data)
 static inline int64_t
 unzigzag64(uint64_t v)
 {
-	// Note:  Using unsigned types prevents undefined behavior
-	return (int64_t)((v >> 1) ^ (~(v & 1) + 1));
+	if (v & 1)
+		return -(v >> 1) - 1;
+	else
+		return v >> 1;
 }
 
 static inline uint64_t
