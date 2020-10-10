@@ -14,11 +14,6 @@
 # limitations under the License.
 #
 
-include $(APPDIR)/Make.defs
-
-#
-# protobuf-c
-#
-CSRCS = $(wildcard protobuf-c/*.c)
-
-include $(APPDIR)/Application.mk
+config PROTOBUF_C
+	bool "Enable Protocol Buffer C"
+	default n
