@@ -111,7 +111,7 @@ MessageGenerator::~MessageGenerator() {}
 
 void MessageGenerator::
 GenerateStructTypedef(io::Printer* printer) {
-  printer->Print("typedef struct _$classname$ $classname$;\n",
+  printer->Print("typedef struct $classname$ $classname$;\n",
                  "classname", FullNameToC(descriptor_->full_name()));
 
   for (int i = 0; i < descriptor_->nested_type_count(); i++) {
@@ -169,7 +169,7 @@ GenerateStructDefinition(io::Printer* printer) {
       }
       printer->Print(vars, "$ucclassname$__$oneofname$_$fieldname$ = $fieldnum$$opt_comma$\n");
     }
-    printer->Print(vars, "  PROTOBUF_C__FORCE_ENUM_TO_BE_INT_SIZE($ucclassname$__$oneofname$)\n");
+    printer->Print(vars, "  PROTOBUF_C__FORCE_ENUM_TO_BE_INT_SIZE($ucclassname$__$oneofname$__CASE)\n");
     printer->Outdent();
     printer->Print(vars, "} $foneofname$Case;\n\n");
   }
@@ -179,7 +179,7 @@ GenerateStructDefinition(io::Printer* printer) {
   PrintComment (printer, msgSourceLoc.leading_comments);
 
   printer->Print(vars,
-    "struct $dllexport$ _$classname$\n"
+    "struct $dllexport$ $classname$\n"
     "{\n"
     "  ProtobufCMessage base;\n");
 

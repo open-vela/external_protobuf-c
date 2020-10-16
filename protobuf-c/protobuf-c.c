@@ -1618,22 +1618,19 @@ required_field_pack_to_buffer(const ProtobufCFieldDescriptor *field,
 		break;
 	}
 	case PROTOBUF_C_TYPE_MESSAGE: {
-		uint8_t simple_buffer_scratch[256];
-		size_t sublen;
 		const ProtobufCMessage *msg = *(ProtobufCMessage * const *) member;
-		ProtobufCBufferSimple simple_buffer =
-			PROTOBUF_C_BUFFER_SIMPLE_INIT(simple_buffer_scratch);
-
+		
 		scratch[0] |= PROTOBUF_C_WIRE_TYPE_LENGTH_PREFIXED;
-		if (msg == NULL)
-			sublen = 0;
-		else
-			sublen = protobuf_c_message_pack_to_buffer(msg, &simple_buffer.base);
-		rv += uint32_pack(sublen, scratch + rv);
-		buffer->append(buffer, rv, scratch);
-		buffer->append(buffer, sublen, simple_buffer.data);
-		rv += sublen;
-		PROTOBUF_C_BUFFER_SIMPLE_CLEAR(&simple_buffer);
+		if (msg == NULL) {
+			rv += uint32_pack(0, scratch + rv);
+			buffer->append(buffer, rv, scratch);
+		} else {
+			size_t sublen = protobuf_c_message_get_packed_size(msg);
+			rv += uint32_pack(sublen, scratch + rv);
+			buffer->append(buffer, rv, scratch);
+			protobuf_c_message_pack_to_buffer(msg, buffer);
+			rv += sublen;
+		}
 		break;
 	}
 	default:
@@ -2095,9 +2092,9 @@ parse_tag_and_wiretype(size_t len,
 
 /* sizeof(ScannedMember) must be <= (1UL<<BOUND_SIZEOF_SCANNED_MEMBER_LOG2) */
 #define BOUND_SIZEOF_SCANNED_MEMBER_LOG2 5
-typedef struct _ScannedMember ScannedMember;
+typedef struct ScannedMember ScannedMember;
 /** Field as it's being read. */
-struct _ScannedMember {
+struct ScannedMember {
 	uint32_t tag;              /**< Field tag. */
 	uint8_t wire_type;         /**< Field type. */
 	uint8_t length_prefix_len; /**< Prefix length. */
@@ -2132,11 +2129,13 @@ scan_length_prefixed_data(size_t len, const uint8_t *data,
 		// Protobuf messages should always be less than 2 GiB in size.
 		// We also want to return early here so that hdr_len + val does
 		// not overflow on 32-bit systems.
-		PROTOBUF_C_UNPACK_ERROR("length prefix of %lu is too large", val);
+		PROTOBUF_C_UNPACK_ERROR("length prefix of %lu is too large",
+			(unsigned long int)val);
 		return 0;
 	}
 	if (hdr_len + val > len) {
-		PROTOBUF_C_UNPACK_ERROR("data too short after length-prefix of %lu", val);
+		PROTOBUF_C_UNPACK_ERROR("data too short after length-prefix of %lu",
+			(unsigned long int)val);
 		return 0;
 	}
 	return hdr_len + val;
