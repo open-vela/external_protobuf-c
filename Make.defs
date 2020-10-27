@@ -15,5 +15,5 @@
 #
 
 ifneq ($(CONFIG_PROTOBUF_C),)
-CONFIGURED_APPS += $(APPDIR)/external/protobuf-c/protobuf-c
+CONFIGURED_APPS += $(APPDIR)/external/protobuf-c
 endif
