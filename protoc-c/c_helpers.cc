@@ -87,30 +87,30 @@ namespace c {
 #pragma warning(disable:4996)
 #endif
 
-std::string DotsToUnderscores(const std::string& name) {
+string DotsToUnderscores(const string& name) {
   return StringReplace(name, ".", "_", true);
 }
 
-std::string DotsToColons(const std::string& name) {
+string DotsToColons(const string& name) {
   return StringReplace(name, ".", "::", true);
 }
 
-std::string SimpleFtoa(float f) {
+string SimpleFtoa(float f) {
   char buf[100];
   snprintf(buf,sizeof(buf),"%.*g", FLT_DIG, f);
   buf[sizeof(buf)-1] = 0;		/* should NOT be necessary */
   return buf;
 }
-std::string SimpleDtoa(double d) {
+string SimpleDtoa(double d) {
   char buf[100];
   snprintf(buf,sizeof(buf),"%.*g", DBL_DIG, d);
   buf[sizeof(buf)-1] = 0;		/* should NOT be necessary */
   return buf;
 }
 
-std::string CamelToUpper(const std::string &name) {
+string CamelToUpper(const string &name) {
   bool was_upper = true;		// suppress initial _
-  std::string rv = "";
+  string rv = "";
   int len = name.length();
   for (int i = 0; i < len; i++) {
     bool is_upper = isupper(name[i]);
@@ -125,9 +125,9 @@ std::string CamelToUpper(const std::string &name) {
   }
   return rv;
 }
-std::string CamelToLower(const std::string &name) {
+string CamelToLower(const string &name) {
   bool was_upper = true;		// suppress initial _
-  std::string rv = "";
+  string rv = "";
   int len = name.length();
   for (int i = 0; i < len; i++) {
     bool is_upper = isupper(name[i]);
@@ -144,24 +144,24 @@ std::string CamelToLower(const std::string &name) {
 }
 
 
-std::string ToUpper(const std::string &name) {
-  std::string rv = "";
+string ToUpper(const string &name) {
+  string rv = "";
   int len = name.length();
   for (int i = 0; i < len; i++) {
     rv += toupper(name[i]);
   }
   return rv;
 }
-std::string ToLower(const std::string &name) {
-  std::string rv = "";
+string ToLower(const string &name) {
+  string rv = "";
   int len = name.length();
   for (int i = 0; i < len; i++) {
     rv += tolower(name[i]);
   }
   return rv;
 }
-std::string ToCamel(const std::string &name) {
-  std::string rv = "";
+string ToCamel(const string &name) {
+  string rv = "";
   int len = name.length();
   bool next_is_upper = true;
   for (int i = 0; i < len; i++) {
@@ -177,10 +177,10 @@ std::string ToCamel(const std::string &name) {
   return rv;
 }
 
-std::string FullNameToLower(const std::string &full_name) {
-  std::vector<std::string> pieces;
+string FullNameToLower(const string &full_name) {
+  std::vector<string> pieces;
   SplitStringUsing(full_name, ".", &pieces);
-  std::string rv = "";
+  string rv = "";
   for (unsigned i = 0; i < pieces.size(); i++) {
     if (pieces[i] == "") continue;
     if (rv != "") rv += "__";
@@ -188,10 +188,10 @@ std::string FullNameToLower(const std::string &full_name) {
   }
   return rv;
 }
-std::string FullNameToUpper(const std::string &full_name) {
-  std::vector<std::string> pieces;
+string FullNameToUpper(const string &full_name) {
+  std::vector<string> pieces;
   SplitStringUsing(full_name, ".", &pieces);
-  std::string rv = "";
+  string rv = "";
   for (unsigned i = 0; i < pieces.size(); i++) {
     if (pieces[i] == "") continue;
     if (rv != "") rv += "__";
@@ -199,10 +199,10 @@ std::string FullNameToUpper(const std::string &full_name) {
   }
   return rv;
 }
-std::string FullNameToC(const std::string &full_name) {
-  std::vector<std::string> pieces;
+string FullNameToC(const string &full_name) {
+  std::vector<string> pieces;
   SplitStringUsing(full_name, ".", &pieces);
-  std::string rv = "";
+  string rv = "";
   for (unsigned i = 0; i < pieces.size(); i++) {
     if (pieces[i] == "") continue;
     if (rv != "") rv += "__";
@@ -211,11 +211,11 @@ std::string FullNameToC(const std::string &full_name) {
   return rv;
 }
 
-void PrintComment (io::Printer* printer, std::string comment)
+void PrintComment (io::Printer* printer, string comment)
 {
    if (!comment.empty())
    {
-      std::vector<std::string> comment_lines;
+      std::vector<string> comment_lines;
       SplitStringUsing (comment, "\r\n", &comment_lines);
       printer->Print ("/*\n");
       for (int i = 0; i < comment_lines.size(); i++)
@@ -228,10 +228,10 @@ void PrintComment (io::Printer* printer, std::string comment)
 
             /* Or cause other compiler issues. */
             size_t delim_i;
-            while ((delim_i = comment_lines[i].find("/*")) != std::string::npos)
+            while ((delim_i = comment_lines[i].find("/*")) != string::npos)
                comment_lines[i][delim_i] = ' ';
 
-            while ((delim_i = comment_lines[i].find("*/")) != std::string::npos)
+            while ((delim_i = comment_lines[i].find("*/")) != string::npos)
                comment_lines[i][delim_i + 1] = ' ';
 
             printer->Print (" *$line$\n", "line", comment_lines[i]);
@@ -241,8 +241,8 @@ void PrintComment (io::Printer* printer, std::string comment)
    }
 }
 
-std::string ConvertToSpaces(const std::string &input) {
-  return std::string(input.size(), ' ');
+string ConvertToSpaces(const string &input) {
+  return string(input.size(), ' ');
 }
 
 int compare_name_indices_by_name(const void *a, const void *b)
@@ -253,7 +253,7 @@ int compare_name_indices_by_name(const void *a, const void *b)
 }
 
 
-std::string CEscape(const std::string& src);
+string CEscape(const string& src);
 
 const char* const kKeywordList[] = {
   "and", "and_eq", "asm", "auto", "bitand", "bitor", "bool", "break", "case",
@@ -268,24 +268,24 @@ const char* const kKeywordList[] = {
   "void", "volatile", "wchar_t", "while", "xor", "xor_eq"
 };
 
-std::set<std::string> MakeKeywordsMap() {
-  std::set<std::string> result;
+std::set<string> MakeKeywordsMap() {
+  std::set<string> result;
   for (int i = 0; i < GOOGLE_ARRAYSIZE(kKeywordList); i++) {
     result.insert(kKeywordList[i]);
   }
   return result;
 }
 
-std::set<std::string> kKeywords = MakeKeywordsMap();
+std::set<string> kKeywords = MakeKeywordsMap();
 
-std::string ClassName(const Descriptor* descriptor, bool qualified) {
+string ClassName(const Descriptor* descriptor, bool qualified) {
   // Find "outer", the descriptor of the top-level message in which
   // "descriptor" is embedded.
   const Descriptor* outer = descriptor;
   while (outer->containing_type() != NULL) outer = outer->containing_type();
 
-  const std::string& outer_name = outer->full_name();
-  std::string inner_name = descriptor->full_name().substr(outer_name.size());
+  const string& outer_name = outer->full_name();
+  string inner_name = descriptor->full_name().substr(outer_name.size());
 
   if (qualified) {
     return "::" + DotsToColons(outer_name) + DotsToUnderscores(inner_name);
@@ -294,7 +294,7 @@ std::string ClassName(const Descriptor* descriptor, bool qualified) {
   }
 }
 
-std::string ClassName(const EnumDescriptor* enum_descriptor, bool qualified) {
+string ClassName(const EnumDescriptor* enum_descriptor, bool qualified) {
   if (enum_descriptor->containing_type() == NULL) {
     if (qualified) {
       return DotsToColons(enum_descriptor->full_name());
@@ -302,29 +302,29 @@ std::string ClassName(const EnumDescriptor* enum_descriptor, bool qualified) {
       return enum_descriptor->name();
     }
   } else {
-    std::string result = ClassName(enum_descriptor->containing_type(), qualified);
+    string result = ClassName(enum_descriptor->containing_type(), qualified);
     result += '_';
     result += enum_descriptor->name();
     return result;
   }
 }
 
-std::string FieldName(const FieldDescriptor* field) {
-  std::string result = ToLower(field->name());
+string FieldName(const FieldDescriptor* field) {
+  string result = ToLower(field->name());
   if (kKeywords.count(result) > 0) {
     result.append("_");
   }
   return result;
 }
 
-std::string FieldDeprecated(const FieldDescriptor* field) {
+string FieldDeprecated(const FieldDescriptor* field) {
   if (field->options().deprecated()) {
     return " PROTOBUF_C__DEPRECATED";
   }
   return "";
 }
 
-std::string StripProto(const std::string& filename) {
+string StripProto(const string& filename) {
   if (HasSuffixString(filename, ".protodevel")) {
     return StripSuffixString(filename, ".protodevel");
   } else {
@@ -333,8 +333,8 @@ std::string StripProto(const std::string& filename) {
 }
 
 // Convert a file name into a valid identifier.
-std::string FilenameIdentifier(const std::string& filename) {
-  std::string result;
+string FilenameIdentifier(const string& filename) {
+  string result;
   for (unsigned i = 0; i < filename.size(); i++) {
     if (isalnum(filename[i])) {
       result.push_back(filename[i]);
@@ -350,11 +350,11 @@ std::string FilenameIdentifier(const std::string& filename) {
 }
 
 // Return the name of the BuildDescriptors() function for a given file.
-std::string GlobalBuildDescriptorsName(const std::string& filename) {
+string GlobalBuildDescriptorsName(const string& filename) {
   return "proto_BuildDescriptors_" + FilenameIdentifier(filename);
 }
 
-std::string GetLabelName(FieldDescriptor::Label label) {
+string GetLabelName(FieldDescriptor::Label label) {
   switch (label) {
     case FieldDescriptor::LABEL_OPTIONAL: return "optional";
     case FieldDescriptor::LABEL_REQUIRED: return "required";
@@ -364,9 +364,9 @@ std::string GetLabelName(FieldDescriptor::Label label) {
 }
 
 unsigned
-WriteIntRanges(io::Printer* printer, int n_values, const int *values, const std::string &name)
+WriteIntRanges(io::Printer* printer, int n_values, const int *values, const string &name)
 {
-  std::map<std::string, std::string> vars;
+  std::map<string, string> vars;
   vars["name"] = name;
   if (n_values > 0) {
     int n_ranges = 1;
@@ -420,19 +420,19 @@ WriteIntRanges(io::Printer* printer, int n_values, const int *values, const std:
 //    it only replaces the first instance of "old."
 // ----------------------------------------------------------------------
 
-void StringReplace(const std::string& s, const std::string& oldsub,
-                   const std::string& newsub, bool replace_all,
-                   std::string* res) {
+void StringReplace(const string& s, const string& oldsub,
+                   const string& newsub, bool replace_all,
+                   string* res) {
   if (oldsub.empty()) {
     res->append(s);  // if empty, append the given string.
     return;
   }
 
-  std::string::size_type start_pos = 0;
-  std::string::size_type pos;
+  string::size_type start_pos = 0;
+  string::size_type pos;
   do {
     pos = s.find(oldsub, start_pos);
-    if (pos == std::string::npos) {
+    if (pos == string::npos) {
       break;
     }
     res->append(s, start_pos, pos - start_pos);
@@ -452,9 +452,9 @@ void StringReplace(const std::string& s, const std::string& oldsub,
 //    happened or not.
 // ----------------------------------------------------------------------
 
-std::string StringReplace(const std::string& s, const std::string& oldsub,
-                          const std::string& newsub, bool replace_all) {
-  std::string ret;
+string StringReplace(const string& s, const string& oldsub,
+                     const string& newsub, bool replace_all) {
+  string ret;
   StringReplace(s, oldsub, newsub, replace_all, &ret);
   return ret;
 }
@@ -469,7 +469,7 @@ std::string StringReplace(const std::string& s, const std::string& oldsub,
 // ----------------------------------------------------------------------
 template <typename ITR>
 static inline
-void SplitStringToIteratorUsing(const std::string& full,
+void SplitStringToIteratorUsing(const string& full,
                                 const char* delim,
                                 ITR& result) {
   // Optimize the common case where delim is a single character.
@@ -483,17 +483,17 @@ void SplitStringToIteratorUsing(const std::string& full,
       } else {
         const char* start = p;
         while (++p != end && *p != c);
-        *result++ = std::string(start, p - start);
+        *result++ = string(start, p - start);
       }
     }
     return;
   }
 
-  std::string::size_type begin_index, end_index;
+  string::size_type begin_index, end_index;
   begin_index = full.find_first_not_of(delim);
-  while (begin_index != std::string::npos) {
+  while (begin_index != string::npos) {
     end_index = full.find_first_of(delim, begin_index);
-    if (end_index == std::string::npos) {
+    if (end_index == string::npos) {
       *result++ = full.substr(begin_index);
       return;
     }
@@ -502,10 +502,10 @@ void SplitStringToIteratorUsing(const std::string& full,
   }
 }
 
-void SplitStringUsing(const std::string& full,
+void SplitStringUsing(const string& full,
                       const char* delim,
-                      std::vector<std::string>* result) {
-  std::back_insert_iterator< std::vector<std::string> > it(*result);
+                      std::vector<string>* result) {
+  std::back_insert_iterator< std::vector<string> > it(*result);
   SplitStringToIteratorUsing(full, delim, it);
 }
 
@@ -558,13 +558,13 @@ static int CEscapeInternal(const char* src, int src_len, char* dest,
   dest[used] = '\0';   // doesn't count towards return value though
   return used;
 }
-std::string CEscape(const std::string& src) {
+string CEscape(const string& src) {
   const int dest_length = src.size() * 4 + 1; // Maximum possible expansion
   std::unique_ptr<char[]> dest(new char[dest_length]);
   const int len = CEscapeInternal(src.data(), src.size(),
                                   dest.get(), dest_length, false);
   GOOGLE_DCHECK_GE(len, 0);
-  return std::string(dest.get(), len);
+  return string(dest.get(), len);
 }
 
 }  // namespace c

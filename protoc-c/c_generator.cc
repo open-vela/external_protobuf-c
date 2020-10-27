@@ -81,14 +81,14 @@ namespace c {
 //   "foo=bar,baz,qux=corge"
 // parses to the pairs:
 //   ("foo", "bar"), ("baz", ""), ("qux", "corge")
-void ParseOptions(const std::string& text, std::vector<std::pair<std::string, std::string> >* output) {
-  std::vector<std::string> parts;
+void ParseOptions(const string& text, std::vector<std::pair<string, string> >* output) {
+  std::vector<string> parts;
   SplitStringUsing(text, ",", &parts);
 
   for (unsigned i = 0; i < parts.size(); i++) {
-    std::string::size_type equals_pos = parts[i].find_first_of('=');
-    std::pair<std::string, std::string> value;
-    if (equals_pos == std::string::npos) {
+    string::size_type equals_pos = parts[i].find_first_of('=');
+    std::pair<string, string> value;
+    if (equals_pos == string::npos) {
       value.first = parts[i];
       value.second = "";
     } else {
@@ -103,10 +103,10 @@ CGenerator::CGenerator() {}
 CGenerator::~CGenerator() {}
 
 bool CGenerator::Generate(const FileDescriptor* file,
-                            const std::string& parameter,
+                            const string& parameter,
                             OutputDirectory* output_directory,
-                            std::string* error) const {
-  std::vector<std::pair<std::string, std::string> > options;
+                            string* error) const {
+  std::vector<std::pair<string, string> > options;
   ParseOptions(parameter, &options);
 
   // -----------------------------------------------------------------
@@ -129,7 +129,7 @@ bool CGenerator::Generate(const FileDescriptor* file,
   //   }
   // FOO_EXPORT is a macro which should expand to __declspec(dllexport) or
   // __declspec(dllimport) depending on what is being compiled.
-  std::string dllexport_decl;
+  string dllexport_decl;
 
   for (unsigned i = 0; i < options.size(); i++) {
     if (options[i].first == "dllexport_decl") {
@@ -143,7 +143,7 @@ bool CGenerator::Generate(const FileDescriptor* file,
   // -----------------------------------------------------------------
 
 
-  std::string basename = StripProto(file->name());
+  string basename = StripProto(file->name());
   basename.append(".pb-c");
 
   FileGenerator file_generator(file, dllexport_decl);

@@ -74,7 +74,7 @@ namespace c {
 using internal::WireFormat;
 
 void SetStringVariables(const FieldDescriptor* descriptor,
-                        std::map<std::string, std::string>* variables) {
+                        std::map<string, string>* variables) {
   (*variables)["name"] = FieldName(descriptor);
   (*variables)["default"] = FullNameToLower(descriptor->full_name())
 	+ "__default_value";
@@ -110,19 +110,19 @@ void StringFieldGenerator::GenerateDefaultValueDeclarations(io::Printer* printer
 }
 void StringFieldGenerator::GenerateDefaultValueImplementations(io::Printer* printer) const
 {
-  std::map<std::string, std::string> vars;
+  std::map<string, string> vars;
   vars["default"] = variables_.find("default")->second;
   vars["escaped"] = CEscape(descriptor_->default_value_string());
   printer->Print(vars, "char $default$[] = \"$escaped$\";\n");
 }
 
-std::string StringFieldGenerator::GetDefaultValue(void) const
+string StringFieldGenerator::GetDefaultValue(void) const
 {
   return variables_.find("default")->second;
 }
 void StringFieldGenerator::GenerateStaticInit(io::Printer* printer) const
 {
-  std::map<std::string, std::string> vars;
+  std::map<string, string> vars;
   if (descriptor_->has_default_value()) {
     vars["default"] = GetDefaultValue();
   } else if (FieldSyntax(descriptor_) == 2) {
