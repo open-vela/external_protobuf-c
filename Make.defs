@@ -16,7 +16,4 @@
 
 ifneq ($(CONFIG_PROTOBUF_C),)
 CONFIGURED_APPS += $(APPDIR)/external/protobuf-c/protobuf-c
-
-CFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" $(APPDIR)/external/protobuf-c}
-CXXFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" $(APPDIR)/external/protobuf-c}
 endif
