@@ -84,9 +84,9 @@ class LIBPROTOC_EXPORT CGenerator : public CodeGenerator {
 
   // implements CodeGenerator ----------------------------------------
   bool Generate(const FileDescriptor* file,
-                const std::string& parameter,
+                const string& parameter,
                 OutputDirectory* output_directory,
-                std::string* error) const;
+                string* error) const;
 
  private:
   GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(CGenerator);
