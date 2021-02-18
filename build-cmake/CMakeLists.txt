@@ -1,7 +1,8 @@
 SET(PACKAGE protobuf-c)
 SET(PACKAGE_NAME protobuf-c)
 SET(PACKAGE_VERSION 1.3.3)
-
+SET(PACKAGE_URL https://github.com/protobuf-c/protobuf-c)
+SET(PACKAGE_DESCRIPTION "Protocol Buffers implementation in C")
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8 FATAL_ERROR)
 
@@ -10,6 +11,12 @@ PROJECT(protobuf-c)
 #options
 option(MSVC_STATIC_BUILD "MSVC_STATIC_BUILD" OFF)
 option(BUILD_PROTO3 "BUILD_PROTO3" ON)
+option(BUILD_PROTOC "Build protoc-gen-c" ON)
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+option(BUILD_TESTS "Build tests" ON)
+else()
+option(BUILD_TESTS "Build tests" OFF)
+endif()
 
 INCLUDE(TestBigEndian)
 TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
@@ -41,6 +48,8 @@ set_target_properties(protobuf-c PROPERTIES COMPILE_PDB_NAME protobuf-c)
 
 INCLUDE_DIRECTORIES(${MAIN_DIR})
 INCLUDE_DIRECTORIES(${MAIN_DIR}/protobuf-c)
+
+IF(BUILD_PROTOC)
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}) # for generated files
 
 FIND_PACKAGE(Protobuf REQUIRED)
@@ -49,6 +58,7 @@ INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
 if (BUILD_PROTO3)
 	ADD_DEFINITIONS(-DHAVE_PROTO3)
 endif()
+ENDIF()
 
 if (MSVC AND MSVC_STATIC_BUILD)
 	# In case we are building static libraries, link also the runtime library statically
@@ -66,6 +76,11 @@ if (MSVC AND MSVC_STATIC_BUILD)
 	  endif(${flag_var} MATCHES "/MD")
 	endforeach(flag_var)
 endif (MSVC AND MSVC_STATIC_BUILD)
+
+IF(BUILD_PROTOC)
+SET(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+SET(CMAKE_CXX_EXTENSIONS OFF)
 FILE(GLOB PROTOC_GEN_C_SRC ${MAIN_DIR}/protoc-c/*.h ${MAIN_DIR}/protoc-c/*.cc )
 ADD_EXECUTABLE(protoc-gen-c ${PROTOC_GEN_C_SRC})
 
@@ -85,7 +100,7 @@ FUNCTION(GENERATE_TEST_SOURCES PROTO_FILE SRC HDR)
 ENDFUNCTION()
 
 
-IF(CMAKE_BUILD_TYPE MATCHES Debug)
+IF(BUILD_TESTS)
 ENABLE_TESTING()
 
 GENERATE_TEST_SOURCES(${TEST_DIR}/test.proto t/test.pb-c.c t/test.pb-c.h)
@@ -132,9 +147,21 @@ ADD_EXECUTABLE(test-generated-code3 ${TEST_DIR}/generated-code/test-generated-co
 TARGET_COMPILE_DEFINITIONS(test-generated-code3 PUBLIC -DPROTO3)
 TARGET_LINK_LIBRARIES(test-generated-code3 protobuf-c)
 
+ENDIF() # BUILD_TESTS
+
+# https://github.com/protocolbuffers/protobuf/issues/5107
+IF(CMAKE_HOST_UNIX)
+	FIND_PACKAGE(Threads REQUIRED)
+	TARGET_LINK_LIBRARIES(protoc-gen-c ${CMAKE_THREAD_LIBS_INIT})
+	IF(BUILD_TESTS)
+		TARGET_LINK_LIBRARIES(cxx-generate-packed-data ${CMAKE_THREAD_LIBS_INIT})
+	ENDIF()
 ENDIF()
 
-INSTALL(TARGETS protoc-gen-c protobuf-c RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
+INSTALL(TARGETS protoc-gen-c RUNTIME DESTINATION bin)
+ENDIF() # BUILD_PROTOC
+
+INSTALL(TARGETS protobuf-c LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 INSTALL(FILES ${MAIN_DIR}/protobuf-c/protobuf-c.h DESTINATION include/protobuf-c)
 INSTALL(FILES ${MAIN_DIR}/protobuf-c/protobuf-c.h DESTINATION include)
 INSTALL(FILES ${CMAKE_BINARY_DIR}/protobuf-c.pdb DESTINATION lib OPTIONAL)
@@ -143,6 +170,16 @@ IF(CMAKE_HOST_UNIX)
 INSTALL(CODE "EXECUTE_PROCESS (COMMAND ln -sf protoc-gen-c protoc-c WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)")
 ENDIF()
 
+INCLUDE(GNUInstallDirs)
+SET(prefix ${CMAKE_INSTALL_PREFIX})
+SET(exec_prefix \${prefix})
+SET(bindir \${exec_prefix}/${CMAKE_INSTALL_BINDIR})
+SET(libdir \${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
+SET(includedir \${prefix}/${CMAKE_INSTALL_INCLUDEDIR})
+CONFIGURE_FILE(${MAIN_DIR}/protobuf-c/libprotobuf-c.pc.in libprotobuf-c.pc @ONLY)
+INSTALL(FILES ${CMAKE_BINARY_DIR}/libprotobuf-c.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
+IF(BUILD_TESTS)
 INCLUDE(Dart)
 
 SET(DART_TESTING_TIMEOUT 5)
@@ -152,6 +189,7 @@ ADD_TEST(test-generated-code3 test-generated-code3)
 ADD_TEST(test-issue220 test-issue220)
 ADD_TEST(test-issue251 test-issue251)
 ADD_TEST(test-version test-version)
+ENDIF()
 
 
 INCLUDE(CPack)

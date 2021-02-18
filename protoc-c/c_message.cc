@@ -80,7 +80,7 @@ namespace c {
 // ===================================================================
 
 MessageGenerator::MessageGenerator(const Descriptor* descriptor,
-                                   const string& dllexport_decl)
+                                   const std::string& dllexport_decl)
   : descriptor_(descriptor),
     dllexport_decl_(dllexport_decl),
     field_generators_(descriptor),
@@ -111,7 +111,7 @@ MessageGenerator::~MessageGenerator() {}
 
 void MessageGenerator::
 GenerateStructTypedef(io::Printer* printer) {
-  printer->Print("typedef struct _$classname$ $classname$;\n",
+  printer->Print("typedef struct $classname$ $classname$;\n",
                  "classname", FullNameToC(descriptor_->full_name()));
 
   for (int i = 0; i < descriptor_->nested_type_count(); i++) {
@@ -137,7 +137,7 @@ GenerateStructDefinition(io::Printer* printer) {
     nested_generators_[i]->GenerateStructDefinition(printer);
   }
 
-  std::map<string, string> vars;
+  std::map<std::string, std::string> vars;
   vars["classname"] = FullNameToC(descriptor_->full_name());
   vars["lcclassname"] = FullNameToLower(descriptor_->full_name());
   vars["ucclassname"] = FullNameToUpper(descriptor_->full_name());
@@ -169,7 +169,7 @@ GenerateStructDefinition(io::Printer* printer) {
       }
       printer->Print(vars, "$ucclassname$__$oneofname$_$fieldname$ = $fieldnum$$opt_comma$\n");
     }
-    printer->Print(vars, "  PROTOBUF_C__FORCE_ENUM_TO_BE_INT_SIZE($ucclassname$__$oneofname$)\n");
+    printer->Print(vars, "  PROTOBUF_C__FORCE_ENUM_TO_BE_INT_SIZE($ucclassname$__$oneofname$__CASE)\n");
     printer->Outdent();
     printer->Print(vars, "} $foneofname$Case;\n\n");
   }
@@ -179,7 +179,7 @@ GenerateStructDefinition(io::Printer* printer) {
   PrintComment (printer, msgSourceLoc.leading_comments);
 
   printer->Print(vars,
-    "struct $dllexport$ _$classname$\n"
+    "struct $dllexport$ $classname$\n"
     "{\n"
     "  ProtobufCMessage base;\n");
 
@@ -258,7 +258,7 @@ GenerateHelperFunctionDeclarations(io::Printer* printer, bool is_submessage)
     nested_generators_[i]->GenerateHelperFunctionDeclarations(printer, true);
   }
 
-  std::map<string, string> vars;
+  std::map<std::string, std::string> vars;
   vars["classname"] = FullNameToC(descriptor_->full_name());
   vars["lcclassname"] = FullNameToLower(descriptor_->full_name());
   printer->Print(vars,
@@ -306,7 +306,7 @@ void MessageGenerator::GenerateClosureTypedef(io::Printer* printer)
   for (int i = 0; i < descriptor_->nested_type_count(); i++) {
     nested_generators_[i]->GenerateClosureTypedef(printer);
   }
-  std::map<string, string> vars;
+  std::map<std::string, std::string> vars;
   vars["name"] = FullNameToC(descriptor_->full_name());
   printer->Print(vars,
                  "typedef void (*$name$_Closure)\n"
@@ -331,7 +331,7 @@ GenerateHelperFunctionDefinitions(io::Printer* printer, bool is_submessage)
     nested_generators_[i]->GenerateHelperFunctionDefinitions(printer, true);
   }
 
-  std::map<string, string> vars;
+  std::map<std::string, std::string> vars;
   vars["classname"] = FullNameToC(descriptor_->full_name());
   vars["lcclassname"] = FullNameToLower(descriptor_->full_name());
   vars["ucclassname"] = FullNameToUpper(descriptor_->full_name());
@@ -389,7 +389,7 @@ GenerateHelperFunctionDefinitions(io::Printer* printer, bool is_submessage)
 
 void MessageGenerator::
 GenerateMessageDescriptor(io::Printer* printer) {
-    std::map<string, string> vars;
+    std::map<std::string, std::string> vars;
     vars["fullname"] = descriptor_->full_name();
     vars["classname"] = FullNameToC(descriptor_->full_name());
     vars["lcclassname"] = FullNameToLower(descriptor_->full_name());
