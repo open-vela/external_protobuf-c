@@ -68,12 +68,6 @@
 #include <string>
 #include <google/protobuf/compiler/code_generator.h>
 
-#if defined(_WIN32) && defined(PROTOBUF_C_USE_SHARED_LIB)
-# define PROTOC_C_EXPORT __declspec(dllexport)
-#else
-# define PROTOC_C_EXPORT
-#endif
-
 namespace google {
 namespace protobuf {
 namespace compiler {
@@ -83,7 +77,7 @@ namespace c {
 // header.  If you create your own protocol compiler binary and you want
 // it to support C++ output, you can do so by registering an instance of this
 // CodeGenerator with the CommandLineInterface in your main() function.
-class PROTOC_C_EXPORT CGenerator : public CodeGenerator {
+class LIBPROTOC_EXPORT CGenerator : public CodeGenerator {
  public:
   CGenerator();
   ~CGenerator();
