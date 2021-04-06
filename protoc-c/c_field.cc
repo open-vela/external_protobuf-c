@@ -67,7 +67,7 @@
 #include <protoc-c/c_enum_field.h>
 #include <protoc-c/c_message_field.h>
 #include <protoc-c/c_helpers.h>
-#include <protobuf-c/protobuf-c.pb.h>
+#include <google/protobuf/descriptor.pb.h>
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/io/printer.h>
 
@@ -107,19 +107,15 @@ void FieldGenerator::GenerateDescriptorInitializerGeneric(io::Printer* printer,
 							  const std::string &descriptor_addr) const
 {
   std::map<std::string, std::string> variables;
-  const OneofDescriptor *oneof = descriptor_->containing_oneof();
-  const ProtobufCFileOptions opt = descriptor_->file()->options().GetExtension(pb_c_file);
   variables["TYPE"] = type_macro;
-  variables["classname"] = FullNameToC(FieldScope(descriptor_)->full_name(), FieldScope(descriptor_)->file());
+  variables["classname"] = FullNameToC(FieldScope(descriptor_)->full_name());
   variables["name"] = FieldName(descriptor_);
-  if (opt.use_oneof_field_name())
-    variables["proto_name"] = oneof->name();
-  else
-    variables["proto_name"] = descriptor_->name();
+  variables["proto_name"] = descriptor_->name();
   variables["descriptor_addr"] = descriptor_addr;
   variables["value"] = SimpleItoa(descriptor_->number());
+  const OneofDescriptor *oneof = descriptor_->containing_oneof();
   if (oneof != NULL)
-    variables["oneofname"] = CamelToLower(oneof->name());
+    variables["oneofname"] = FullNameToLower(oneof->name());
 
   if (FieldSyntax(descriptor_) == 3 &&
     descriptor_->label() == FieldDescriptor::LABEL_OPTIONAL) {
@@ -131,7 +127,7 @@ void FieldGenerator::GenerateDescriptorInitializerGeneric(io::Printer* printer,
 
   if (descriptor_->has_default_value()) {
     variables["default_value"] = std::string("&")
-                               + FullNameToLower(descriptor_->full_name(), descriptor_->file())
+                               + FullNameToLower(descriptor_->full_name())
 			       + "__default_value";
   } else if (FieldSyntax(descriptor_) == 3 &&
     descriptor_->type() == FieldDescriptor::TYPE_STRING) {
@@ -207,15 +203,11 @@ FieldGeneratorMap::FieldGeneratorMap(const Descriptor* descriptor)
 }
 
 FieldGenerator* FieldGeneratorMap::MakeGenerator(const FieldDescriptor* field) {
-  const ProtobufCFieldOptions opt = field->options().GetExtension(pb_c_field);
   switch (field->type()) {
     case FieldDescriptor::TYPE_MESSAGE:
       return new MessageFieldGenerator(field);
     case FieldDescriptor::TYPE_STRING:
-      if (opt.string_as_bytes())
-        return new BytesFieldGenerator(field);
-      else
-        return new StringFieldGenerator(field);
+      return new StringFieldGenerator(field);
     case FieldDescriptor::TYPE_BYTES:
       return new BytesFieldGenerator(field);
     case FieldDescriptor::TYPE_ENUM:

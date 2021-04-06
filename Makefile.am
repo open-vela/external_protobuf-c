@@ -42,8 +42,7 @@ lib_LTLIBRARIES += \
 	protobuf-c/libprotobuf-c.la
 
 nobase_include_HEADERS += \
-	protobuf-c/protobuf-c.h \
-	protobuf-c/protobuf-c.proto
+	protobuf-c/protobuf-c.h
 
 protobuf_c_libprotobuf_c_la_SOURCES = \
 	protobuf-c/protobuf-c.c \
@@ -100,8 +99,6 @@ protoc_c_protoc_gen_c_SOURCES = \
 	protoc-c/c_service.h \
 	protoc-c/c_string_field.cc \
 	protoc-c/c_string_field.h \
-	protobuf-c/protobuf-c.pb.cc \
-	protobuf-c/protobuf-c.pb.h \
 	protoc-c/main.cc
 protoc_c_protoc_gen_c_CXXFLAGS = \
 	$(AM_CXXFLAGS) \
@@ -110,12 +107,6 @@ protoc_c_protoc_gen_c_LDADD = \
 	$(protobuf_LIBS) \
 	-lprotoc
 
-protobuf-c/protobuf-c.pb.cc protobuf-c/protobuf-c.pb.h: @PROTOC@ $(top_srcdir)/protobuf-c/protobuf-c.proto
-	$(AM_V_GEN)@PROTOC@ -I$(top_srcdir) --cpp_out=$(top_builddir) $(top_srcdir)/protobuf-c/protobuf-c.proto
-
-BUILT_SOURCES += \
-		 protobuf-c/protobuf-c.pb.cc \
-		 protobuf-c/protobuf-c.pb.h
 #
 # protoc-c compat link
 #
@@ -164,8 +155,7 @@ noinst_PROGRAMS += \
 
 t_generated_code2_cxx_generate_packed_data_SOURCES = \
 	t/generated-code2/cxx-generate-packed-data.cc \
-	t/test-full.pb.cc \
-	protobuf-c/protobuf-c.pb.cc
+	t/test-full.pb.cc
 $(t_generated_code2_cxx_generate_packed_data_OBJECTS): t/test-full.pb.h
 t_generated_code2_cxx_generate_packed_data_CXXFLAGS = \
 	$(AM_CXXFLAGS) \
@@ -226,23 +216,6 @@ t_version_version_SOURCES = \
 t_version_version_LDADD = \
 	protobuf-c/libprotobuf-c.la
 
-# Issue #204
-check_PROGRAMS += \
-	t/issue204/issue204
-TESTS += \
-	t/issue204/issue204
-t_issue204_issue204_SOURCES = \
-	t/issue204/issue204.c \
-	t/issue204/issue204.pb-c.c
-t_issue204_issue204_LDADD = \
-	protobuf-c/libprotobuf-c.la
-t/issue204/issue204.pb-c.c t/issue204/issue204.pb-c.h: $(top_builddir)/protoc-c/protoc-gen-c$(EXEEXT) $(top_srcdir)/t/issue204/issue204.proto
-	$(AM_V_GEN)@PROTOC@ --plugin=protoc-gen-c=$(top_builddir)/protoc-c/protoc-gen-c$(EXEEXT) -I$(top_srcdir) --c_out=$(top_builddir) $(top_srcdir)/t/issue204/issue204.proto
-BUILT_SOURCES += \
-	t/issue204/issue204.pb-c.c t/issue204/issue204.pb-c.h
-EXTRA_DIST += \
-	t/issue204/issue204.proto
-
 # Issue #220
 check_PROGRAMS += \
 	t/issue220/issue220
@@ -301,22 +274,6 @@ BUILT_SOURCES += \
 	t/issue389/issue389.pb-c.c t/issue389/issue389.pb-c.h
 EXTRA_DIST += \
 	t/issue389/issue389.proto
-
-check_PROGRAMS += \
-	t/issue440/issue440
-TESTS += \
-	t/issue440/issue440
-t_issue440_issue440_SOURCES = \
-	t/issue440/issue440.c \
-	t/issue440/issue440.pb-c.c
-t_issue440_issue440_LDADD = \
-	protobuf-c/libprotobuf-c.la
-t/issue440/issue440.pb-c.c t/issue440/issue440.pb-c.h: $(top_builddir)/protoc-c/protoc-gen-c$(EXEEXT) $(top_srcdir)/t/issue440/issue440.proto
-	$(AM_V_GEN)@PROTOC@ --plugin=protoc-gen-c=$(top_builddir)/protoc-c/protoc-gen-c$(EXEEXT) -I$(top_srcdir) --c_out=$(top_builddir) $(top_srcdir)/t/issue440/issue440.proto
-BUILT_SOURCES += \
-	t/issue440/issue440.pb-c.c t/issue440/issue440.pb-c.h
-EXTRA_DIST += \
-	t/issue440/issue440.proto
 endif # BUILD_PROTO3
 EXTRA_DIST += \
 	t/issue330/issue330.proto
