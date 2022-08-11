@@ -64,7 +64,7 @@
 #include <protoc-c/c_helpers.h>
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/wire_format.h>
-#include <protobuf-c/protobuf-c.pb.h>
+#include <google/protobuf/descriptor.pb.h>
 
 namespace google {
 namespace protobuf {
@@ -74,9 +74,9 @@ namespace c {
 using internal::WireFormat;
 
 void SetStringVariables(const FieldDescriptor* descriptor,
-                        std::map<std::string, std::string>* variables) {
+                        std::map<string, string>* variables) {
   (*variables)["name"] = FieldName(descriptor);
-  (*variables)["default"] = FullNameToLower(descriptor->full_name(), descriptor->file())
+  (*variables)["default"] = FullNameToLower(descriptor->full_name())
 	+ "__default_value";
   (*variables)["deprecated"] = FieldDeprecated(descriptor);
 }
@@ -93,19 +93,13 @@ StringFieldGenerator::~StringFieldGenerator() {}
 
 void StringFieldGenerator::GenerateStructMembers(io::Printer* printer) const
 {
-  const ProtobufCFileOptions opt = descriptor_->file()->options().GetExtension(pb_c_file);
-
   switch (descriptor_->label()) {
     case FieldDescriptor::LABEL_REQUIRED:
     case FieldDescriptor::LABEL_OPTIONAL:
-      if (opt.const_strings())
-        printer->Print(variables_, "const ");
       printer->Print(variables_, "char *$name$$deprecated$;\n");
       break;
     case FieldDescriptor::LABEL_REPEATED:
       printer->Print(variables_, "size_t n_$name$$deprecated$;\n");
-      if (opt.const_strings())
-        printer->Print(variables_, "const ");
       printer->Print(variables_, "char **$name$$deprecated$;\n");
       break;
   }
@@ -116,26 +110,23 @@ void StringFieldGenerator::GenerateDefaultValueDeclarations(io::Printer* printer
 }
 void StringFieldGenerator::GenerateDefaultValueImplementations(io::Printer* printer) const
 {
-  std::map<std::string, std::string> vars;
+  std::map<string, string> vars;
   vars["default"] = variables_.find("default")->second;
   vars["escaped"] = CEscape(descriptor_->default_value_string());
   printer->Print(vars, "char $default$[] = \"$escaped$\";\n");
 }
 
-std::string StringFieldGenerator::GetDefaultValue(void) const
+string StringFieldGenerator::GetDefaultValue(void) const
 {
   return variables_.find("default")->second;
 }
 void StringFieldGenerator::GenerateStaticInit(io::Printer* printer) const
 {
-  std::map<std::string, std::string> vars;
-  const ProtobufCFileOptions opt = descriptor_->file()->options().GetExtension(pb_c_file);
+  std::map<string, string> vars;
   if (descriptor_->has_default_value()) {
     vars["default"] = GetDefaultValue();
   } else if (FieldSyntax(descriptor_) == 2) {
     vars["default"] = "NULL";
-  } else if (opt.const_strings()) {
-    vars["default"] = "(const char *)protobuf_c_empty_string";
   } else {
     vars["default"] = "(char *)protobuf_c_empty_string";
   }

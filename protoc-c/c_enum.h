@@ -81,7 +81,7 @@ class EnumGenerator {
  public:
   // See generator.cc for the meaning of dllexport_decl.
   explicit EnumGenerator(const EnumDescriptor* descriptor,
-                         const std::string& dllexport_decl);
+                         const string& dllexport_decl);
   ~EnumGenerator();
 
   // Header stuff.
@@ -105,7 +105,7 @@ class EnumGenerator {
 
  private:
   const EnumDescriptor* descriptor_;
-  std::string dllexport_decl_;
+  string dllexport_decl_;
 
   GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(EnumGenerator);
 };
