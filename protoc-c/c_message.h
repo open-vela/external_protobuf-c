@@ -86,7 +86,7 @@ class MessageGenerator {
  public:
   // See generator.cc for the meaning of dllexport_decl.
   explicit MessageGenerator(const Descriptor* descriptor,
-                            const string& dllexport_decl);
+                            const std::string& dllexport_decl);
   ~MessageGenerator();
 
   // Header stuff.
@@ -111,21 +111,27 @@ class MessageGenerator {
   void GenerateStructStaticInitMacro(io::Printer* printer);
 
   // Generate standard helper functions declarations for this message.
-  void GenerateHelperFunctionDeclarations(io::Printer* printer, bool is_submessage);
+  void GenerateHelperFunctionDeclarations(io::Printer* printer,
+					  bool is_pack_deep,
+					  bool gen_pack,
+					  bool gen_init);
 
   // Source file stuff.
 
   // Generate code that initializes the global variable storing the message's
   // descriptor.
-  void GenerateMessageDescriptor(io::Printer* printer);
-  void GenerateHelperFunctionDefinitions(io::Printer* printer, bool is_submessage);
+  void GenerateMessageDescriptor(io::Printer* printer, bool gen_init);
+  void GenerateHelperFunctionDefinitions(io::Printer* printer,
+					 bool is_pack_deep,
+					 bool gen_pack,
+					 bool gen_init);
 
  private:
 
-  string GetDefaultValueC(const FieldDescriptor *fd);
+  std::string GetDefaultValueC(const FieldDescriptor *fd);
 
   const Descriptor* descriptor_;
-  string dllexport_decl_;
+  std::string dllexport_decl_;
   FieldGeneratorMap field_generators_;
   std::unique_ptr<std::unique_ptr<MessageGenerator>[]> nested_generators_;
   std::unique_ptr<std::unique_ptr<EnumGenerator>[]> enum_generators_;

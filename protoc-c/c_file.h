@@ -90,7 +90,7 @@ class FileGenerator {
  public:
   // See generator.cc for the meaning of dllexport_decl.
   explicit FileGenerator(const FileDescriptor* file,
-                         const string& dllexport_decl);
+                         const std::string& dllexport_decl);
   ~FileGenerator();
 
   void GenerateHeader(io::Printer* printer);
@@ -103,9 +103,6 @@ class FileGenerator {
   std::unique_ptr<std::unique_ptr<EnumGenerator>[]> enum_generators_;
   std::unique_ptr<std::unique_ptr<ServiceGenerator>[]> service_generators_;
   std::unique_ptr<std::unique_ptr<ExtensionGenerator>[]> extension_generators_;
-
-  // E.g. if the package is foo.bar, package_parts_ is {"foo", "bar"}.
-  std::vector<string> package_parts_;
 
   GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(FileGenerator);
 };
